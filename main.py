@@ -5,6 +5,10 @@ from threading import Thread
 from pystray import Icon, MenuItem, Menu
 from PIL import Image, ImageDraw
 from datetime import datetime
+import platform
+
+# Sprawdzamy, czy to Linux
+is_linux = platform.system() == "Linux"
 
 # Flagi dla trybów
 night_mode = False  # Tryb nocny ręczny
@@ -109,9 +113,10 @@ thread.daemon = True
 thread.start()
 
 # Uruchamianie tray w osobnym wątku
-tray_thread = Thread(target=setup_tray)
-tray_thread.daemon = True
-tray_thread.start()
+if is_linux:
+    tray_thread = Thread(target=setup_tray)
+    tray_thread.daemon = True
+    tray_thread.start()
 
 # Uruchomienie pętli głównej aplikacji
 root.mainloop()
