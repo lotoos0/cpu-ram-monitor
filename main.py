@@ -7,23 +7,23 @@ from PIL import Image, ImageDraw
 from datetime import datetime
 import platform
 
-# Sprawdzamy, czy to Linux
+# Check if the system is Linux
 is_linux = platform.system() == "Linux"
 
-# Flagi dla trybów
-night_mode = False  # Tryb nocny ręczny
-auto_night_mode = False  # Tryb nocny automatyczny
+# Flags for modes
+night_mode = False  # Manual night mode
+auto_night_mode = False  # Automatic night mode
 
-# Funkcja do monitorowania zużycia i zmiany widgetu
+# Function to monitor resource usage and update the widget
 def update_stats(label, root):
     while True:
         cpu_usage = psutil.cpu_percent(interval=1)
         ram_usage = psutil.virtual_memory().percent
 
         if is_night_mode():
-            label.config(bg="darkslategray", fg="lightgray")  # Tryb nocny: tło i kolor tekstu
+            label.config(bg="darkslategray", fg="lightgray")  # Night mode: background and text color
         else:
-            # Zmiana koloru zależnie od zużycia (tło z napisami)
+            # Change background color based on CPU and RAM usage
             if cpu_usage > 80 or ram_usage > 80:
                 label.config(bg="red", fg="white")
             elif cpu_usage > 50 or ram_usage > 50:
@@ -35,7 +35,7 @@ def update_stats(label, root):
 
         time.sleep(1)
 
-# Funkcja sprawdzająca, czy włączyć tryb nocny (ręcznie lub automatycznie)
+# Function to determine if night mode should be enabled (manual or automatic)
 def is_night_mode():
     if night_mode:
         return True
@@ -44,79 +44,78 @@ def is_night_mode():
         return 21 <= current_hour or current_hour < 6
     return False
 
-# Funkcja do dynamicznego przeciągania okna
+# Function to make the window draggable
 def make_draggable(widget):
     widget.bind("<Button-1>", start_drag)
     widget.bind("<B1-Motion>", drag_window)
 
 def start_drag(event):
-    widget = event.widget.winfo_toplevel()  # Uzyskaj okno główne
+    widget = event.widget.winfo_toplevel()  # Get the main window
     widget._drag_data = {"x": event.x, "y": event.y}
 
 def drag_window(event):
-    widget = event.widget.winfo_toplevel()  # Uzyskaj okno główne
+    widget = event.widget.winfo_toplevel()  # Get the main window
     x = widget.winfo_pointerx() - widget._drag_data["x"]
     y = widget.winfo_pointery() - widget._drag_data["y"]
     widget.geometry(f"+{x}+{y}")
 
-# Funkcja do tworzenia ikony w tray
+# Function to create the tray icon
 def create_image(color="green"):
-    image = Image.new('RGB', (64, 64), color=(0, 0, 0))  # Czarny kwadrat
+    image = Image.new('RGB', (64, 64), color=(0, 0, 0))  # Black square
     draw = ImageDraw.Draw(image)
-    draw.rectangle((16, 16, 48, 48), fill=color)  # Kolorowy kwadrat wewnątrz
+    draw.rectangle((16, 16, 48, 48), fill=color)  # Colorful square inside
     return image
 
-# Funkcja zmieniająca tryb nocny
+# Function to toggle night mode
 def toggle_night_mode(icon, item):
     global night_mode
     night_mode = not night_mode
 
-# Funkcja zmieniająca tryb nocny automatyczny
+# Function to toggle automatic night mode
 def toggle_auto_night_mode(icon, item):
     global auto_night_mode
     auto_night_mode = not auto_night_mode
 
-# Funkcja ustawiająca tray
+# Function to set up the system tray
 def setup_tray():
     menu = Menu(
-        MenuItem('Tryb nocny (ręczny)', toggle_night_mode, checked=lambda item: night_mode),
-        MenuItem('Tryb nocny automatyczny', toggle_auto_night_mode, checked=lambda item: auto_night_mode),
+        MenuItem('Night mode (manual)', toggle_night_mode, checked=lambda item: night_mode),
+        MenuItem('Automatic night mode', toggle_auto_night_mode, checked=lambda item: auto_night_mode),
         MenuItem('Quit', lambda icon, item: root.quit())
     )
     icon = Icon("CPU_RAM Monitor", create_image(), menu=menu)
     icon.run()
 
-# Tworzenie okna aplikacji dla trybu zwykłego
+# Create the main window for normal mode
 root = tk.Tk()
-root.title("CPU i RAM Monitor")
+root.title("CPU and RAM Monitor")
 root.geometry("150x30")
 root.attributes("-topmost", True)
 root.overrideredirect(True)
 
-# Umożliwienie przeciągania okna
+# Enable dragging of the window
 make_draggable(root)
 
-# Umieszczenie okna w prawym dolnym rogu ekranu
+# Position the window in the bottom right corner of the screen
 screen_width = root.winfo_screenwidth()
 screen_height = root.winfo_screenheight()
 x = screen_width - 150
 y = screen_height - 70
 root.geometry(f'+{x}+{y}')
 
-# Etykieta wyświetlająca informacje
-label = tk.Label(root, text="Pobieranie danych...", font=("Helvetica", 10))
+# Label to display information
+label = tk.Label(root, text="Fetching data...", font=("Helvetica", 10))
 label.pack(fill='both', expand=True)
 
-# Uruchamianie funkcji aktualizacji w osobnym wątku
+# Start the resource monitoring function in a separate thread
 thread = Thread(target=update_stats, args=(label, root))
 thread.daemon = True
 thread.start()
 
-# Uruchamianie tray w osobnym wątku
-if is_linux:
-    tray_thread = Thread(target=setup_tray)
-    tray_thread.daemon = True
-    tray_thread.start()
+# Start the tray icon in a separate thread (for both Linux and Windows)
+tray_thread = Thread(target=setup_tray)
+tray_thread.daemon = True
+tray_thread.start()
 
-# Uruchomienie pętli głównej aplikacji
+# Start the main loop of the application
 root.mainloop()
