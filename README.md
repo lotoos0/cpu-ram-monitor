@@ -26,8 +26,8 @@ Make sure you have the following installed:
 # 🔧 Installation
 1. Clone the repository:
    ```
-   git clone https://github.com/lotoos0/CpuRamTracker
-   cd CpuRamTracker
+   git clone https://github.com/lotoos0/cpu-ram-monitor
+   cd cpu-ram-monitor
    ```
 2. Install the dependencies:
    For Windows:
