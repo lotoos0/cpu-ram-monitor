@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import simpledialog, messagebox
 import psutil
 import time
 from threading import Thread
@@ -11,6 +12,15 @@ import configparser
 # Load configuration from config.ini
 config = configparser.ConfigParser()
 config.read('config.ini')
+
+# Define default settings
+DEFAULT_SETTINGS = {
+    'update_interval': 1,
+    'cpu_warning_threshold': 50,
+    'cpu_alert_threshold': 80,
+    'ram_warning_threshold': 50,
+    'ram_alert_threshold': 80
+}
 
 # Get settings from config file
 update_interval = int(config['Settings']['update_interval'])
@@ -25,6 +35,7 @@ is_linux = platform.system() == "Linux"
 # Flags for modes
 night_mode = False  # Manual night mode
 auto_night_mode = False  # Automatic night mode
+
 
 # Function to monitor resource usage and update the widget
 def update_stats(label, root):
@@ -58,6 +69,85 @@ def update_stats(label, root):
 
         time.sleep(update_interval)
 
+
+# Function to update the config file (without showing a message)
+def update_config(new_update_interval, new_cpu_warning_threshold, new_cpu_alert_threshold, new_ram_warning_threshold,
+                  new_ram_alert_threshold, show_message=True):
+    config['Settings']['update_interval'] = str(new_update_interval)
+    config['Settings']['cpu_warning_threshold'] = str(new_cpu_warning_threshold)
+    config['Settings']['cpu_alert_threshold'] = str(new_cpu_alert_threshold)
+    config['Settings']['ram_warning_threshold'] = str(new_ram_warning_threshold)
+    config['Settings']['ram_alert_threshold'] = str(new_ram_alert_threshold)
+
+    with open('config.ini', 'w') as configfile:
+        config.write(configfile)
+
+    if show_message:
+        messagebox.showinfo("Settings Updated", "Configuration has been updated successfully!")
+
+
+# Function to reset settings to default
+def reset_to_default():
+    global update_interval, cpu_warning_threshold, cpu_alert_threshold, ram_warning_threshold, ram_alert_threshold
+
+    # Update global settings to default values
+    update_interval = DEFAULT_SETTINGS['update_interval']
+    cpu_warning_threshold = DEFAULT_SETTINGS['cpu_warning_threshold']
+    cpu_alert_threshold = DEFAULT_SETTINGS['cpu_alert_threshold']
+    ram_warning_threshold = DEFAULT_SETTINGS['ram_warning_threshold']
+    ram_alert_threshold = DEFAULT_SETTINGS['ram_alert_threshold']
+
+    # Update config.ini with default values, without showing the update message
+    update_config(
+        DEFAULT_SETTINGS['update_interval'],
+        DEFAULT_SETTINGS['cpu_warning_threshold'],
+        DEFAULT_SETTINGS['cpu_alert_threshold'],
+        DEFAULT_SETTINGS['ram_warning_threshold'],
+        DEFAULT_SETTINGS['ram_alert_threshold'],
+        show_message=False  # Don't show the update success message
+    )
+
+    # Show only the message about resetting to defaults
+    messagebox.showinfo("Settings Reset", "Configuration has been reset to default values.")
+
+
+# Function to show the settings dialog
+def show_settings_dialog():
+    global update_interval, cpu_warning_threshold, cpu_alert_threshold, ram_warning_threshold, ram_alert_threshold
+
+    # Make sure the main window is active before showing the dialog
+    root.deiconify()
+
+    # Prompt the user for new settings
+    new_update_interval = simpledialog.askinteger("Settings", "Update interval (seconds):",
+                                                  initialvalue=update_interval, parent=root)
+    new_cpu_warning_threshold = simpledialog.askinteger("Settings", "CPU warning threshold (%):",
+                                                        initialvalue=cpu_warning_threshold, parent=root)
+    new_cpu_alert_threshold = simpledialog.askinteger("Settings", "CPU alert threshold (%):",
+                                                      initialvalue=cpu_alert_threshold, parent=root)
+    new_ram_warning_threshold = simpledialog.askinteger("Settings", "RAM warning threshold (%):",
+                                                        initialvalue=ram_warning_threshold, parent=root)
+    new_ram_alert_threshold = simpledialog.askinteger("Settings", "RAM alert threshold (%):",
+                                                      initialvalue=ram_alert_threshold, parent=root)
+
+    if new_update_interval is not None and new_cpu_warning_threshold is not None and new_cpu_alert_threshold is not None and new_ram_warning_threshold is not None and new_ram_alert_threshold is not None:
+        # Update global settings
+        update_interval = new_update_interval
+        cpu_warning_threshold = new_cpu_warning_threshold
+        cpu_alert_threshold = new_cpu_alert_threshold
+        ram_warning_threshold = new_ram_warning_threshold
+        ram_alert_threshold = new_ram_alert_threshold
+
+        # Update the config file
+        update_config(new_update_interval, new_cpu_warning_threshold, new_cpu_alert_threshold,
+                      new_ram_warning_threshold, new_ram_alert_threshold)
+
+
+# Function to trigger the settings dialog from the Tkinter main thread
+def open_settings_dialog():
+    root.after(0, show_settings_dialog)
+
+
 # Function to determine if night mode should be enabled (manual or automatic)
 def is_night_mode():
     try:
@@ -70,6 +160,7 @@ def is_night_mode():
         print(f"Error determining night mode: {e}")
     return False
 
+
 # Function to make the window draggable
 def make_draggable(widget):
     try:
@@ -78,12 +169,14 @@ def make_draggable(widget):
     except Exception as e:
         print(f"Error making window draggable: {e}")
 
+
 def start_drag(event):
     try:
         widget = event.widget.winfo_toplevel()  # Get the main window
         widget._drag_data = {"x": event.x, "y": event.y}
     except Exception as e:
         print(f"Error starting drag: {e}")
+
 
 def drag_window(event):
     try:
@@ -93,6 +186,7 @@ def drag_window(event):
         widget.geometry(f"+{x}+{y}")
     except Exception as e:
         print(f"Error dragging window: {e}")
+
 
 # Function to create the tray icon
 def create_image(color="green"):
@@ -105,6 +199,7 @@ def create_image(color="green"):
         print(f"Error creating tray icon: {e}")
         return None
 
+
 # Function to toggle night mode
 def toggle_night_mode(icon, item):
     global night_mode
@@ -112,6 +207,7 @@ def toggle_night_mode(icon, item):
         night_mode = not night_mode
     except Exception as e:
         print(f"Error toggling night mode: {e}")
+
 
 # Function to toggle automatic night mode
 def toggle_auto_night_mode(icon, item):
@@ -121,18 +217,22 @@ def toggle_auto_night_mode(icon, item):
     except Exception as e:
         print(f"Error toggling automatic night mode: {e}")
 
+
 # Function to set up the system tray
 def setup_tray():
     try:
         menu = Menu(
             MenuItem('Night mode (manual)', toggle_night_mode, checked=lambda item: night_mode),
             MenuItem('Automatic night mode', toggle_auto_night_mode, checked=lambda item: auto_night_mode),
+            MenuItem('Settings', lambda: open_settings_dialog()),  # Trigger settings dialog via the Tkinter thread
+            MenuItem('Reset to Default', lambda: reset_to_default()),  # Add reset to default option
             MenuItem('Quit', lambda icon, item: root.quit())
         )
         icon = Icon("CPU_RAM Monitor", create_image(), menu=menu)
         icon.run()
     except Exception as e:
         print(f"Error setting up system tray: {e}")
+
 
 # Create the main window for normal mode
 root = tk.Tk()
