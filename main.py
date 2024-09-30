@@ -6,6 +6,18 @@ from pystray import Icon, MenuItem, Menu
 from PIL import Image, ImageDraw
 from datetime import datetime
 import platform
+import configparser
+
+# Load configuration from config.ini
+config = configparser.ConfigParser()
+config.read('config.ini')
+
+# Get settings from config file
+update_interval = int(config['Settings']['update_interval'])
+cpu_warning_threshold = int(config['Settings']['cpu_warning_threshold'])
+cpu_alert_threshold = int(config['Settings']['cpu_alert_threshold'])
+ram_warning_threshold = int(config['Settings']['ram_warning_threshold'])
+ram_alert_threshold = int(config['Settings']['ram_alert_threshold'])
 
 # Check if the system is Linux
 is_linux = platform.system() == "Linux"
@@ -27,14 +39,14 @@ def update_stats(label, root):
             cpu_usage, ram_usage = 0, 0  # Fallback values
 
         try:
-            # Update the UI
+            # Update the UI based on thresholds
             if is_night_mode():
                 label.config(bg="darkslategray", fg="lightgray")  # Night mode: background and text color
             else:
-                # Change background color based on CPU and RAM usage
-                if cpu_usage > 80 or ram_usage > 80:
+                # Change background color based on CPU and RAM usage thresholds
+                if cpu_usage > cpu_alert_threshold or ram_usage > ram_alert_threshold:
                     label.config(bg="red", fg="white")
-                elif cpu_usage > 50 or ram_usage > 50:
+                elif cpu_usage > cpu_warning_threshold or ram_usage > ram_warning_threshold:
                     label.config(bg="yellow", fg="black")
                 else:
                     label.config(bg="green", fg="black")
@@ -44,7 +56,7 @@ def update_stats(label, root):
         except Exception as e:
             print(f"Error updating UI: {e}")
 
-        time.sleep(1)
+        time.sleep(update_interval)
 
 # Function to determine if night mode should be enabled (manual or automatic)
 def is_night_mode():
