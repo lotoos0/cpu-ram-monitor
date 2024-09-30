@@ -20,26 +20,26 @@ def drag_window(event):
 
 
 def show_settings_dialog():
-    # Ładujemy aktualną konfigurację za każdym razem, gdy otwieramy okno dialogowe
+    # Load the current configuration every time the settings dialog is opened
     config = load_config()
 
-    # Pobieramy aktualne wartości z konfiguracji
+    # Get current values from the configuration
     update_interval = int(config['Settings']['update_interval'])
     cpu_warning_threshold = int(config['Settings']['cpu_warning_threshold'])
     cpu_alert_threshold = int(config['Settings']['cpu_alert_threshold'])
     ram_warning_threshold = int(config['Settings']['ram_warning_threshold'])
     ram_alert_threshold = int(config['Settings']['ram_alert_threshold'])
 
-    # Wyświetlamy okna dialogowe z aktualnymi wartościami
+    # Display dialog windows with current values
     new_update_interval = simpledialog.askinteger("Settings", "Update interval (seconds):", initialvalue=update_interval)
     new_cpu_warning_threshold = simpledialog.askinteger("Settings", "CPU warning threshold (%):", initialvalue=cpu_warning_threshold)
     new_cpu_alert_threshold = simpledialog.askinteger("Settings", "CPU alert threshold (%):", initialvalue=cpu_alert_threshold)
     new_ram_warning_threshold = simpledialog.askinteger("Settings", "RAM warning threshold (%):", initialvalue=ram_warning_threshold)
     new_ram_alert_threshold = simpledialog.askinteger("Settings", "RAM alert threshold (%):", initialvalue=ram_alert_threshold)
 
-    # Sprawdzamy, czy użytkownik podał nowe wartości i je aktualizujemy
+    # Check if the user provided new values and update them
     if all(v is not None for v in [new_update_interval, new_cpu_warning_threshold, new_cpu_alert_threshold, new_ram_warning_threshold, new_ram_alert_threshold]):
-        # Aktualizacja pliku config.ini
+        # Update the config.ini file
         update_config(config, {
             'update_interval': new_update_interval,
             'cpu_warning_threshold': new_cpu_warning_threshold,
