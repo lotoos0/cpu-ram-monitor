@@ -1,5 +1,3 @@
-import tkinter as tk
-from tkinter import messagebox
 from tkinter import simpledialog
 from config_manager import load_config, update_config
 
@@ -7,7 +5,7 @@ from config_manager import load_config, update_config
 def make_draggable(widget):
     widget.bind("<Button-1>", start_drag)
     widget.bind("<B1-Motion>", drag_window)
-
+    
 def start_drag(event):
     widget = event.widget.winfo_toplevel()
     widget._drag_data = {"x": event.x, "y": event.y}
@@ -20,6 +18,13 @@ def drag_window(event):
 
 
 def show_settings_dialog():
+    """
+        Displays a settings dialog to allow the user to modify monitoring parameters
+        (update interval, CPU and RAM warning and alert thresholds).
+
+        The current settings are loaded from the configuration file and displayed in
+        the dialog boxes. If the user provides new values, the configuration file is updated.
+        """
     # Load the current configuration every time the settings dialog is opened
     config = load_config()
 
