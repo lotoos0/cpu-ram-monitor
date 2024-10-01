@@ -38,6 +38,26 @@ Make sure you have the following installed:
   * [Pillow](https://pillow.readthedocs.io/)
 
 # 🔧 *Installation*
+### Option 1: Download the pre-built files (recommended)
+
+If you don't want to set up the development environment, you can download the pre-built application from the [Releases](https://github.com/lotoos0/cpu-ram-monitor/releases) section.
+
+1. For **Windows**:
+   - Download `cpu_ram_monitor_v1.0.exe` from the latest release.
+   - Double-click the `.exe` file to run the application.
+
+2. For **Linux**:
+   - Download `cpu_ram_monitor_v1.0_linux.tar.gz` from the latest release.
+   - Extract the file:
+     ```bash
+     $ tar -xzf cpu_ram_monitor_v1.0_linux.tar.gz
+     ```
+   - Run the binary:
+     ```bash
+     $ ./cpu_ram_monitor
+     ```
+### Option 2: Clone the repository and set up the environment
+
 1. **Clone the repository**:
 
    ```bash
