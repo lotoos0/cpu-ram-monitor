@@ -11,7 +11,18 @@ logging.basicConfig(
 )
 
 def update_stats(label, root, config):
-    # Load configuration settings
+    """
+    Monitors system CPU and RAM usage and updates the Tkinter label with the stats.
+
+    Args:
+        label (tk.Label): The label widget in the Tkinter window that displays the CPU and RAM usage.
+        root (tk.Tk): The root Tkinter window.
+        config (configparser.ConfigParser): The loaded configuration object containing settings such as update interval and thresholds.
+
+    Raises:
+        psutil.Error: If there is an issue retrieving system stats.
+        Exception: If there is an error updating the UI.
+    """
     update_interval = int(config['Settings']['update_interval'])
     cpu_warning_threshold = int(config['Settings']['cpu_warning_threshold'])
     cpu_alert_threshold = int(config['Settings']['cpu_alert_threshold'])
@@ -24,12 +35,11 @@ def update_stats(label, root, config):
             cpu_usage = psutil.cpu_percent(interval=1)
             ram_usage = psutil.virtual_memory().percent
         except (psutil.Error, Exception) as e:
-            # Log the error instead of printing it
             logging.error(f"Error retrieving system stats: {e}")
             cpu_usage, ram_usage = 0, 0  # Fallback values in case of error
 
         try:
-            # Update UI depending on night mode and thresholds
+            # Update UI based on night mode and thresholds
             if is_night_mode():
                 label.config(bg="darkslategray", fg="lightgray")
             else:
@@ -40,11 +50,10 @@ def update_stats(label, root, config):
                 else:
                     label.config(bg="green", fg="black")
 
-            # Update the label text with CPU and RAM usage
+            # Update the label with CPU and RAM usage
             label.config(text=f'CPU: {cpu_usage}%  RAM: {ram_usage}%')
 
         except Exception as e:
-            # Log the error instead of printing it
             logging.error(f"Error updating UI: {e}")
 
         time.sleep(update_interval)
