@@ -10,6 +10,12 @@ DEFAULT_SETTINGS = {
 }
 
 def load_config():
+    """
+       Loads the configuration from the config.ini file, applying default values if necessary.
+
+       Returns:
+           configparser.ConfigParser: The loaded configuration object with default or user-defined settings.
+       """
     config = configparser.ConfigParser()
     config.read('config.ini')
 
@@ -46,6 +52,13 @@ def validate_config_values(config):
     return True  # Return True if everything is valid
 
 def update_config(config, new_settings):
+    """
+       Updates the configuration file with new settings provided by the user.
+
+       Args:
+           config (configparser.ConfigParser): The current configuration object.
+           new_settings (dict): Dictionary containing the new settings to be updated in the config file.
+       """
     try:
         # Validate new values before updating
         config['Settings'].update({k: str(v) for k, v in new_settings.items()})
@@ -63,6 +76,12 @@ def update_config(config, new_settings):
         messagebox.showerror("Error", f"Failed to save configuration: {e}")
 
 def reset_to_default(config, show_message=True):
+    """
+        Resets the configuration settings to default values.
+
+        Args:
+            config (configparser.ConfigParser): The current configuration object to reset.
+        """
     # Reset settings to default values
     config['Settings'] = {k: str(v) for k, v in DEFAULT_SETTINGS.items()}
 
