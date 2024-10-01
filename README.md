@@ -16,8 +16,11 @@ This project is a lightweight CPU and RAM monitor built with Python and Tkinter.
 * **Customizable thresholds** for CPU and RAM alerts (set via config file or settings dialog).
 * **Cross-platform compatibility**: Runs on Windows and Linux.
 
+# 🔧 *Planned Bug Fixes and Improvements*
+  - Fix display of options in the tray menu on Linux
+
 # 🐞 *Bug Fixes and Error Handling*
-  * fix compatibility on Linux
+  * Fixed compatibility on Linux
     
 # 🚀 *Planned Features*
  * Change the color of the tray icon square depending on usage.
