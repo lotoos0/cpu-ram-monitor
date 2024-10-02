@@ -1,12 +1,15 @@
 import psutil
 import time
 import logging
-from utils import is_night_mode
+from utils import is_night_mode, get_config_dir
 
-# Logging configuration
+# Get the path for monitoring.log in the same directory as config.ini (Documents/CPU_RAM_Monitor)
+log_path = get_config_dir() / 'monitoring.log'
+
+# Logging configuration to write to monitoring.log file
 logging.basicConfig(
-    filename='monitoring.log',  # Log file where messages will be saved
-    level=logging.INFO,  # Logging level set to INFO
+    filename=str(log_path),  # Convert Path object to string
+    level=logging.INFO,  # Set logging level to INFO
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 
