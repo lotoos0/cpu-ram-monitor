@@ -19,9 +19,10 @@ This project is a lightweight CPU and RAM monitor built with Python and Tkinter.
 # 🔧 *Planned Bug Fixes*
   - Fix display of options in the tray menu on Linux
 
-# 🐞 *Bug Fixes and Error Handling*
+# 🐞 *Bug Fixes and Small Improvements*
   * ~~Fixed compatibility on Linux~~
-  * ~~Change the background color based on usage in regular mode.~~
+  * ~~Change the background color based on usage in regular mode~~
+  * ~~Increased the window width slightly to improve text alignment and appearance~~
     
 # 🚀 *Planned Features*
  * Change the color of the tray icon square depending on usage.
