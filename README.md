@@ -21,11 +21,11 @@ This project is a lightweight CPU and RAM monitor built with Python and Tkinter.
 
 # 🐞 *Bug Fixes and Error Handling*
   * ~~Fixed compatibility on Linux~~
+  * ~~Change the background color based on usage in regular mode.~~
     
 # 🚀 *Planned Features*
  * Change the color of the tray icon square depending on usage.
  * Add a checkmark next to the active option in the tray, e.g., auto night mode (9-6).
- * ~~Change the background color based on usage in regular mode.~~
  * ~~Save configuration and logs to user-specific directories.~~
 
 # 🛠️ *Requirements*
