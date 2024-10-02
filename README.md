@@ -27,6 +27,7 @@ This project is a lightweight CPU and RAM monitor built with Python and Tkinter.
 # 🚀 *Planned Features*
  * Change the color of the tray icon square depending on usage.
  * Add a checkmark next to the active option in the tray, e.g., auto night mode (9-6).
+ * Split the background into two sections: one for CPU and one for RAM. The color of each section will change based on the respective CPU or RAM usage.
  * ~~Save configuration and logs to user-specific directories.~~
 
 # 🛠️ *Requirements*
