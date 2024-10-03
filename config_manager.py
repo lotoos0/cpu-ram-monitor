@@ -38,7 +38,7 @@ def load_config():
         logging.info(f"Config file loaded from {config_path} (config_manager.py)")
     else:
         # If the config file does not exist, create one with default settings
-        config['Settings'] = {k: str(v) for k, v in DEFAULT_SETTINGS.items()}
+        config['Settings'] = DEFAULT_SETTINGS
         try:
             with open(config_path, 'w') as configfile:
                 config.write(configfile)
@@ -47,12 +47,33 @@ def load_config():
             logging.error(f"Failed to create config file: {e} (config_manager.py)")
             messagebox.showerror("Error", f"Failed to create configuration file: {e}")
 
-    # Ensure that the loaded config has all necessary settings
-    for key, value in DEFAULT_SETTINGS.items():
-        if key not in config['Settings']:
-            config['Settings'][key] = str(value)
-
     return config
+
+def validate_config_values(config):
+    try:
+        update_interval = int(config['Settings']['update_interval'])
+        cpu_warning_threshold = int(config['Settings']['cpu_warning_threshold'])
+        cpu_alert_threshold = int(config['Settings']['cpu_alert_threshold'])
+        ram_warning_threshold = int(config['Settings']['ram_warning_threshold'])
+        ram_alert_threshold = int(config['Settings']['ram_alert_threshold'])
+
+        # Validate CPU and RAM thresholds (must be in the range of 0-100%)
+        if not (0 <= cpu_warning_threshold <= 100):
+            raise ValueError(f"CPU warning threshold {cpu_warning_threshold}% is out of range (0-100%).")
+        if not (0 <= cpu_alert_threshold <= 100):
+            raise ValueError(f"CPU alert threshold {cpu_alert_threshold}% is out of range (0-100%).")
+        if not (0 <= ram_warning_threshold <= 100):
+            raise ValueError(f"RAM warning threshold {ram_warning_threshold}% is out of range (0-100%).")
+        if not (0 <= ram_alert_threshold <= 100):
+            raise ValueError(f"RAM alert threshold {ram_alert_threshold}% is out of range (0-100%).")
+
+    except ValueError as e:
+        logging.error(f"Invalid Configuration: {e} (config_manager.py)")
+        messagebox.showerror("Invalid Configuration", str(e))
+        return False  # Return False in case of validation error
+
+    logging.info("Configuration values validated successfully (config_manager.py)")
+    return True  # Return True if everything is valid
 
 def update_config(config, new_settings):
     """
@@ -65,6 +86,10 @@ def update_config(config, new_settings):
     try:
         # Validate new values before updating
         config['Settings'].update({k: str(v) for k, v in new_settings.items()})
+
+        # Validate the new values
+        if not validate_config_values(config):
+            return  # Do not save the file if validation fails
 
         # Save changes to the config.ini file
         with open(get_config_path(), 'w') as configfile:
