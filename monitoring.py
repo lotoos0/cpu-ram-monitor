@@ -13,6 +13,7 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 
+
 def update_stats(label, root, config):
     """
     Monitors system CPU and RAM usage and updates the Tkinter label with the stats.
@@ -26,7 +27,11 @@ def update_stats(label, root, config):
         psutil.Error: If there is an issue retrieving system stats.
         Exception: If there is an error updating the UI.
     """
-    update_interval = int(config['Settings']['update_interval'])
+    try:
+        update_interval = int(config['Settings']['update_interval'])
+    except (ValueError, KeyError):
+        update_interval = 1  # Default value in case of error
+
     cpu_warning_threshold = int(config['Settings']['cpu_warning_threshold'])
     cpu_alert_threshold = int(config['Settings']['cpu_alert_threshold'])
     ram_warning_threshold = int(config['Settings']['ram_warning_threshold'])
@@ -59,4 +64,13 @@ def update_stats(label, root, config):
         except Exception as e:
             logging.error(f"Error updating UI: {e}")
 
-        time.sleep(update_interval)
+        # Dynamic update of the interval based on the latest config
+        try:
+            new_interval = int(config['Settings']['update_interval'])
+            if new_interval != update_interval:
+                logging.info(f"Update interval changed to: {new_interval} seconds.")
+                update_interval = new_interval  # Update the interval dynamically
+        except (ValueError, KeyError):
+            logging.error("Error reading update interval from config. Using default.")
+
+        time.sleep(update_interval)  # Use the dynamically updated interval

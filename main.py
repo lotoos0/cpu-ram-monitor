@@ -3,15 +3,20 @@ from threading import Thread
 from gui import make_draggable
 from tray import setup_tray
 from monitoring import update_stats
-from config_manager import load_config
+from config_manager import load_config, get_config_path
+from monitoring_with_config import start_config_monitoring
 
 # Load settings from config.ini
+config_path = get_config_path()
 config = load_config()
+
+# Start monitoring config.ini
+start_config_monitoring(config_path, config)
 
 # Create the main window
 root = tk.Tk()
 root.title("CPU and RAM Monitor")
-root.geometry("150x30")
+root.geometry("165x30")
 root.attributes("-topmost", True)
 root.overrideredirect(True)
 
