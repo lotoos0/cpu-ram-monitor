@@ -1,5 +1,5 @@
 # 🖥️ *CPU and RAM Monitor*
-This project is a lightweight CPU and RAM monitor built with Python and Tkinter. The application displays real-time system statistics (CPU and RAM usage) in a floating window and includes a system tray icon for managing settings like night mode and update intervals.
+This project is a lightweight CPU and RAM monitor built with Python and Tkinter. The application displays real-time system statistics (CPU and RAM usage) in a floating window and includes a system tray icon for managing settings like night mode, update intervals, and more.
 
 # ✨ *Features*
 * **Real-time monitoring** of CPU and RAM usage.
@@ -14,20 +14,23 @@ This project is a lightweight CPU and RAM monitor built with Python and Tkinter.
   * Quit the application.
 * **Draggable Window**: Move the window freely across the screen.
 * **Customizable thresholds** for CPU and RAM alerts (set via config file or settings dialog).
+* **Dynamic configuration updates**: Automatically apply changes from the config file (such as update intervals and CPU/RAM thresholds) in real time without restarting the app.
+* **Background split into two sections**: One section for CPU and one for RAM. The color of each section changes based on the respective usage.
 * **Cross-platform compatibility**: Runs on Windows and Linux.
 
 # 🔧 *Planned Bug Fixes*
-  - Fix display of options in the tray menu on Linux
+  - Fix display of options in the tray menu on Linux.
 
 # 🐞 *Bug Fixes and Small Improvements*
+  * ~~Hotfix: Corrected config loading from config.ini to apply custom user settings.~~
   * ~~Fixed compatibility on Linux~~
   * ~~Change the background color based on usage in regular mode~~
   * ~~Increased the window width slightly to improve text alignment and appearance~~
+  * ~~Applied real-time dynamic updates for all monitored settings.~~
     
 # 🚀 *Planned Features*
- * Change the color of the tray icon square depending on usage.
  * Add a checkmark next to the active option in the tray, e.g., auto night mode (9-6).
- * Split the background into two sections: one for CPU and one for RAM. The color of each section will change based on the respective CPU or RAM usage.
+ * ~~Split the background into two sections: one for CPU and one for RAM. The color of each section will change based on the respective CPU or RAM usage.~~
  * ~~Save configuration and logs to user-specific directories.~~
 
 # 🛠️ *Requirements*
@@ -39,6 +42,7 @@ Make sure you have the following installed:
   * [psutil](https://pypi.org/project/psutil/)
   * [pystray](https://pypi.org/project/pystray/)
   * [Pillow](https://pillow.readthedocs.io/)
+
 
 # 🔧 *Installation*
 ### Option 1: Download the pre-built files (recommended)
