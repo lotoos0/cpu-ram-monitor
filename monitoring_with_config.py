@@ -39,7 +39,23 @@ def update_application_settings(config):
     try:
         # Read new values from the configuration file
         update_interval = int(config['Settings']['update_interval'])
-        logging.info(f"New update interval: {update_interval} seconds")
+
+        cpu_warning_threshold = int(config['Settings']['cpu_warning_threshold'])
+        cpu_alert_threshold = int(config['Settings']['cpu_alert_threshold'])
+
+        ram_warning_threshold = int(config['Settings']['ram_warning_threshold'])
+        ram_alert_threshold = int(config['Settings']['ram_alert_threshold'])
+
+
+
+        logging.info(f"New update interval: {update_interval} seconds.")
+        logging.info(f"New update cpu warning threshold: {cpu_warning_threshold} percent.")
+        logging.info(f"New update cpu alert threshold: {cpu_alert_threshold} percent.")
+        logging.info(f"New update ram_warning_threshold: {ram_warning_threshold} percent.")
+        logging.info(f"New update ram_warning_threshold: {ram_alert_threshold} percent.")
+
+
+
 
         # Additional parameters can be updated here, e.g., CPU and RAM thresholds, etc.
         # cpu_warning_threshold = int(config['Settings']['cpu_warning_threshold'])

@@ -16,7 +16,7 @@ start_config_monitoring(config_path, config)
 # Create the main window
 root = tk.Tk()
 root.title("CPU and RAM Monitor")
-root.geometry("165x30")
+root.geometry("165x35")  # Adjusted window size for two sections
 root.attributes("-topmost", True)
 root.overrideredirect(True)
 
@@ -26,16 +26,20 @@ make_draggable(root)
 # Position the window in the bottom right corner
 screen_width = root.winfo_screenwidth()
 screen_height = root.winfo_screenheight()
-x = screen_width - 150
-y = screen_height - 70
+x = screen_width - 300  # Adjusted width for two sections
+y = screen_height - 100
 root.geometry(f'+{x}+{y}')
 
-# Label to display information
-label = tk.Label(root, text="Fetching data...", font=("Helvetica", 10))
-label.pack(fill='both', expand=True)
+# Create two labels: one for CPU and one for RAM
+cpu_label = tk.Label(root, text="CPU: 0%", font=("Helvetica", 10), bg="green", width=5, height=5)
+ram_label = tk.Label(root, text="RAM: 0%", font=("Helvetica", 10), bg="green", width=5, height=5)
+
+# Place the labels in the window (side by side)
+cpu_label.pack(side="left", fill="both", expand=True)
+ram_label.pack(side="right", fill="both", expand=True)
 
 # Start the resource monitoring function in a separate thread
-thread = Thread(target=update_stats, args=(label, root, config))
+thread = Thread(target=update_stats, args=(cpu_label, ram_label, config))  # Update for both CPU and RAM labels
 thread.daemon = True
 thread.start()
 
